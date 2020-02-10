@@ -19,11 +19,17 @@ window.onload = function () {
     );
     game.onload = function () {
 
-        var lbl = new Label('Unidade USB');
-        lbl.x = 100;
-        lbl.y = 100;
+        var lbl = new Label('The Game Lobby');
+        lbl.x = __width / 2 - (lbl.width / 2);
+        lbl.y = 10;
         lbl.font = '30px Serif';
         game.rootScene.addChild(lbl);
+
+        // Reassign keys.
+        game.keybind(87, 'up');     // 87 is the ASCII code for 'W'.
+        game.keybind(65, 'left');   // 65 is the ASCII code for 'A'.
+        game.keybind(83, 'down');   // 83 is the ASCII code for 'S'.
+        game.keybind(68, 'right');  // 68 is the ASCII code for 'D'.
 
         // var map = new Map(16, 16);
         // map.image = game.assets['assets/imgs/map1.png']
@@ -49,10 +55,15 @@ window.onload = function () {
         item.setImage('assets/imgs/carrot.png');
         game.rootScene.addChild(item);
 
-        var pad = new Pad();
-        pad.x = 100;
-        pad.y = 300;
-        game.rootScene.addChild(pad);
+        // var pad = new Pad();
+        // pad.x = 100;
+        // pad.y = 300;
+        // game.rootScene.addChild(pad);
+
+        game.rootScene.on('touchstart', function (e) {
+            player_4.tl.queue = [];
+            player_4.tl.moveTo(e.x - (32 / 2), e.y - (32 / 2), 30);
+        });
 
         game.rootScene.addChild(player_1);
         game.rootScene.addChild(player_2);
@@ -87,7 +98,7 @@ var PlayerClass = Class.create(Sprite, {
         shadow.scaleX = 0.9;
         game.rootScene.addChild(shadow);
 
-        this.addEventListener(Event.ENTER_FRAME, function(){
+        this.addEventListener(Event.ENTER_FRAME, function () {
             shadow.x = this.x;
             shadow.y = this.y + 23;
         });
@@ -188,8 +199,8 @@ var DropableItem = Class.create(Sprite, {
 
         game.rootScene.addChild(shadow);
 
-        this.addEventListener(Event.ENTER_FRAME, function(){
-            if(this.intersect(collector)){
+        this.addEventListener(Event.ENTER_FRAME, function () {
+            if (this.intersect(collector)) {
                 game.rootScene.removeChild(this);
                 game.rootScene.removeChild(shadow);
                 collector.inventory.push(this);
