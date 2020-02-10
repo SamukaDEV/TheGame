@@ -192,6 +192,7 @@ var PlayerClass = Class.create(Sprite, {
         // });
     }
 });
+// Nao, Sua piranha!!
 
 var PlayerOne = Class.create(PlayerClass, {
     initialize: function (x, y) {
