@@ -1,0 +1,22 @@
+{
+  "name": "TheGame",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "nodemon_local_server": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "nw_start": "nw ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SamukaDEV/TheGame.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SamukaDEV/TheGame/issues"
+  },
+  "homepage": "https://github.com/SamukaDEV/TheGame#readme"
+}
