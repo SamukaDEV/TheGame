@@ -60,10 +60,10 @@ window.onload = function () {
         // pad.y = 300;
         // game.rootScene.addChild(pad);
 
-        game.rootScene.on('touchstart', function (e) {
-            player_4.tl.queue = [];
-            player_4.tl.moveTo(e.x - (32 / 2), e.y - (32 / 2), 30);
-        });
+        // game.rootScene.on('touchstart', function (e) {
+        //     player_4.tl.queue = [];
+        //     player_4.tl.moveTo(e.x - (32 / 2), e.y - (32 / 2), 30);
+        // });
 
         game.rootScene.addChild(player_1);
         game.rootScene.addChild(player_2);

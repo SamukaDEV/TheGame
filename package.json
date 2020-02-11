@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.html",
   "scripts": {
-    "nodemon_local_server": "nodemon server.js",
+    "nodemon_local_server": "nodemon server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "nw_start": "nw ."
   },
@@ -18,5 +18,10 @@
   "bugs": {
     "url": "https://github.com/SamukaDEV/TheGame/issues"
   },
-  "homepage": "https://github.com/SamukaDEV/TheGame#readme"
+  "homepage": "https://github.com/SamukaDEV/TheGame#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0",
+    "sqlite-sync": "^0.3.9"
+  }
 }
