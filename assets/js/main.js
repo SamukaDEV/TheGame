@@ -25,7 +25,7 @@ window.onload = function () {
         socket.on('connect', (e) => {
             console.log('Socket Connected');
             net_state.frame = 6;
-            net_label.text = 'Connected';
+            net_label.text = '... ms';
         });
         socket.on('reconnect', (e) => {
             console.log('Reconnected');
@@ -33,7 +33,7 @@ window.onload = function () {
         socket.on('disconnect', (e) => {
             console.log('Disconnected');
             net_state.frame = 7;
-            net_label.text = 'Reconnecting';
+            net_label.text = '...';
         });
         socket.on('error', (e) => {
             console.log(e);
@@ -56,9 +56,9 @@ window.onload = function () {
         roomName.y = 500;
         game.rootScene.addChild(roomName);
 
-        var joinButton = new enchant.ui.Button("Join Room");
-        joinButton.x = 100;
-        joinButton.y = 500;
+        var joinButton = new enchant.ui.Button("Join Room", null, null, 130);
+        joinButton.x = 10;
+        joinButton.y = 10;
         joinButton.addEventListener('touchend', function (e) {
             socket.emit('join-room', 'DemoRoom');
         });
@@ -66,17 +66,17 @@ window.onload = function () {
 
         var net_state = new Sprite(16, 16);
         net_state.image = game.assets[imgs_path + 'balls.png'];
-        net_state.x = 10;
+        net_state.x = __width - 80;
         net_state.y = 10;
         net_state.frame = 3; // 3 - red; 6 - green; 5 - gray;
         game.rootScene.addChild(net_state);
 
         var net_label = new Label('NET');
-        net_label.x = 30;
+        net_label.x = __width - 60;
         net_label.y = 13;
         game.rootScene.addChild(net_label);
 
-        var lbl = new Label('The Game Lobby');
+        var lbl = new Label('Lobby');
         lbl.x = __width / 2 - (lbl.width / 2);
         lbl.y = 10;
         lbl.font = '30px Serif';
