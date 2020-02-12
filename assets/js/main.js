@@ -4,9 +4,10 @@ var __width = window.innerWidth;
 var __height = window.innerHeight;
 var game = null;
 var player = null;
+var socket = null;
 
 window.onload = function () {
-    game = new Game(__width, __height);
+    game = new Core(__width, __height);
     game.fps = 30; // FPS Global do game
     var imgs_path = 'assets/imgs/';
     game.preload(
@@ -15,9 +16,65 @@ window.onload = function () {
         imgs_path + 'map1.png',
         imgs_path + 'map0.gif',
         imgs_path + 'carrot.png',
-        imgs_path + 'shadow_1.png'
+        imgs_path + 'shadow_1.png',
+        imgs_path + 'balls.png',
     );
     game.onload = function () {
+
+        socket = io('http://localhost');
+        socket.on('connect', (e) => {
+            console.log('Socket Connected');
+            net_state.frame = 6;
+            net_label.text = 'Connected';
+        });
+        socket.on('reconnect', (e) => {
+            console.log('Reconnected');
+        });
+        socket.on('disconnect', (e) => {
+            console.log('Disconnected');
+            net_state.frame = 7;
+            net_label.text = 'Reconnecting';
+        });
+        socket.on('error', (e) => {
+            console.log(e);
+        });
+        socket.on('pong', (ms) => {
+            if(ms >= 100){
+                net_state.frame = 7;
+            }else if(ms < 100){
+                net_state.frame = 6;
+            }
+            net_label.text = ms + ' ms';
+        });
+
+        // game.addEventListener(Event.ENTER_FRAME, function(){
+        //     socket.emit();
+        // });
+
+        var roomName = new enchant.ui.MutableText();
+        roomName.x = 150;
+        roomName.y = 500;
+        game.rootScene.addChild(roomName);
+
+        var joinButton = new enchant.ui.Button("Join Room");
+        joinButton.x = 100;
+        joinButton.y = 500;
+        joinButton.addEventListener('touchend', function (e) {
+            socket.emit('join-room', 'DemoRoom');
+        });
+        game.rootScene.addChild(joinButton);
+
+        var net_state = new Sprite(16, 16);
+        net_state.image = game.assets[imgs_path + 'balls.png'];
+        net_state.x = 10;
+        net_state.y = 10;
+        net_state.frame = 3; // 3 - red; 6 - green; 5 - gray;
+        game.rootScene.addChild(net_state);
+
+        var net_label = new Label('NET');
+        net_label.x = 30;
+        net_label.y = 13;
+        game.rootScene.addChild(net_label);
 
         var lbl = new Label('The Game Lobby');
         lbl.x = __width / 2 - (lbl.width / 2);
@@ -46,12 +103,9 @@ window.onload = function () {
         // );
         // game.rootScene.addChild(map);
 
-        var player_1 = new PlayerClass(300, 300);
-        var player_2 = new PlayerClass(300, 250);
-        var player_3 = new PlayerClass(350, 300);
-        window.player_4 = new PlayerOne(350, 250);
+        player = new PlayerOne(350, 250);
 
-        var item = new DropableItem(200, 200, player_4);
+        var item = new DropableItem(200, 200, player);
         item.setImage('assets/imgs/carrot.png');
         game.rootScene.addChild(item);
 
@@ -65,10 +119,7 @@ window.onload = function () {
         //     player_4.tl.moveTo(e.x - (32 / 2), e.y - (32 / 2), 30);
         // });
 
-        game.rootScene.addChild(player_1);
-        game.rootScene.addChild(player_2);
-        game.rootScene.addChild(player_3);
-        game.rootScene.addChild(player_4);
+        game.rootScene.addChild(player);
 
     }
     game.start();
@@ -84,23 +135,29 @@ document.oncontextmenu = function (e) {
     return false;
 }
 
+window.onresize = function () {
+    game.width = window.innerWidth;
+    game.height = window.innerHeight;
+}
+
 var PlayerClass = Class.create(Sprite, {
     initialize: function (x, y) {
         Sprite.call(this, 32, 32);
         var game = Game.instance;
 
-        var shadow = new Sprite(32, 32);
-        shadow.image = game.assets['assets/imgs/shadow_1.png'];
-        shadow.opacity = 0.4;
-        shadow.x = this.x;
-        shadow.y = this.y + 30;
-        shadow.scaleY = 0.4;
-        shadow.scaleX = 0.9;
-        game.rootScene.addChild(shadow);
+        this.shadow = new Sprite(32, 32);
+        this.shadow.image = game.assets['assets/imgs/shadow_1.png'];
+        this.shadow.opacity = 0.4;
+        this.shadow.x = this.x;
+        this.shadow.y = this.y + 30;
+        this.shadow.scaleY = 0.4;
+        this.shadow.scaleX = 0.9;
+        // shadow.alignTopIn(this, 20);
+        game.rootScene.addChild(this.shadow);
 
         this.addEventListener(Event.ENTER_FRAME, function () {
-            shadow.x = this.x;
-            shadow.y = this.y + 23;
+            this.shadow.x = this.x;
+            this.shadow.y = this.y + 23;
         });
 
         this.inventory = [];
@@ -125,7 +182,6 @@ var PlayerClass = Class.create(Sprite, {
         }
     }
 });
-// Nao, Sua piranha!!
 
 var PlayerOne = Class.create(PlayerClass, {
     initialize: function (x, y) {
@@ -185,28 +241,31 @@ var DropableItem = Class.create(Sprite, {
             .scaleTo(this.scaleX, this.scaleY, 30).and().moveBy(0, -15, 30)
             .loop();
 
-        var shadow = new Sprite(32, 32);
-        shadow.image = game.assets['assets/imgs/shadow_1.png'];
-        shadow.opacity = 0.4;
-        shadow.x = this.x;
-        shadow.y = this.y + 30;
-        shadow.scaleY = 0.2;
-        shadow.scaleX = 0.5;
+        this.shadow = new Sprite(32, 32);
+        this.shadow.image = game.assets['assets/imgs/shadow_1.png'];
+        this.shadow.opacity = 0.4;
+        this.shadow.x = this.x;
+        this.shadow.y = this.y + 30;
+        this.shadow.scaleY = 0.2;
+        this.shadow.scaleX = 0.5;
 
-        shadow.tl
-            .scaleTo(shadow.scaleX - 0.08, shadow.scaleY, 30)
-            .scaleTo(shadow.scaleX + 0.08, shadow.scaleY, 30)
+        this.shadow.tl
+            .scaleTo(this.shadow.scaleX - 0.08, this.shadow.scaleY, 30)
+            .scaleTo(this.shadow.scaleX + 0.08, this.shadow.scaleY, 30)
             .loop();
 
-        game.rootScene.addChild(shadow);
+        game.rootScene.addChild(this.shadow);
 
         this.addEventListener(Event.ENTER_FRAME, function () {
             if (this.intersect(collector)) {
-                game.rootScene.removeChild(this);
-                game.rootScene.removeChild(shadow);
+                this.remove();
                 collector.inventory.push(this);
             }
         });
+    },
+    remove() {
+        game.rootScene.removeChild(this);
+        game.rootScene.removeChild(this.shadow);
     },
     setImage: function (img_asset) {
         this.image = game.assets[img_asset];

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Debug</title>
+</head>
+
+<body>
+    <button onclick="createRoom()">Create Room</button>
+    <button onclick="showRooms()">Show Rooms on Server</button>
+    <button onclick="joinRoom()">Join Room</button>
+    <script src="js/socket.io.js"></script>
+    <script>
+        const socket = io(document.location.hostname);
+        socket.on('connect', (e) => {
+            console.log('Connected');
+        });
+        socket.on('reconnect', (e) => {
+            console.log('Reconnected');
+        });
+        socket.on('disconnect', (e) => {
+            console.log('Disconnected');
+        });
+        socket.on('error', (e) => {
+            console.log(e);
+        });
+        socket.on('server-msg', (data) => {
+            console.log(data);
+        });
+        socket.on('game-state', (data)=>{
+            console.log(data);
+        });
+        function createRoom(){
+            socket.emit('create-room', {
+                name: 'DemoRoom',
+                max_players: 4,
+                players: []
+            });
+        }
+        function joinRoom(){
+            socket.emit('join-room', 'DemoRoom');
+        }
+        function showRooms(){
+            socket.emit('show-rooms');
+        }
+    </script>
+</body>
+
+</html>
