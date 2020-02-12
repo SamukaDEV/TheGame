@@ -8,13 +8,11 @@ const os = require('os');
 
 sqlite.connect(path.join(__dirname, 'database.db'));
 
-
 console.clear();
 console.log('______TheGame_SERVER________');
 console.log('OS Platform', os.platform());
 console.log('OS Release', os.release());
 console.log('NODE_ENV', process.env.NODE_ENV || 'Debug-Local');
-
 
 var app = express()
     .use(express.static(path.join(__dirname, 'public')))

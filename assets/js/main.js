@@ -130,6 +130,7 @@ document.addEventListener('keydown', function (e) {
     if (e.keyCode == 116)
         document.location.reload();
 });
+
 document.oncontextmenu = function (e) {
     e.preventDefault();
     return false;
@@ -271,45 +272,3 @@ var DropableItem = Class.create(Sprite, {
         this.image = game.assets[img_asset];
     }
 });
-
-
-// player = new Sprite(32, 32);
-// player.image = game.assets['assets/imgs/chara5.png'];
-// player.scale(2);
-// player.x = (__width / 2) - (player.width / 2);
-// player.y = (__height / 2) - (player.height / 2);
-// player.frame = [0, 0, 0, 1, 1, 1, 2, 2, 2];
-// player.moving = false;
-
-// var Animations = {
-//     down: [0, 0, 0, 1, 1, 1, 2, 2, 2],
-//     up: [27, 27, 27, 28, 28, 28, 29, 29, 29],
-//     left: [9, 9, 9, 10, 10, 10, 11, 11, 11],
-//     right: [18, 18, 18, 19, 19, 19, 20, 20, 20]
-// }
-
-// var Speed = {
-//     left: 3,
-//     right: 3,
-//     up: 3,
-//     down: 3
-// }
-
-// player.addEventListener(Event.ENTER_FRAME, function () {
-//     if (game.input.left) {
-//         player.x -= Speed.left;
-//         player.frame = Animations.left;
-//     }
-//     if (game.input.right) {
-//         player.x += Speed.right;
-//         player.frame = Animations.right;
-//     }
-//     if (game.input.up) {
-//         player.y -= Speed.up;
-//         player.frame = Animations.up;
-//     }
-//     if (game.input.down) {
-//         player.y += Speed.down;
-//         player.frame = Animations.down;
-//     }
-// });
